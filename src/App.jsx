@@ -65,8 +65,8 @@ function App() {
     }
   };
 
-  // Assume these functions have similar structures but different implementations
-  const onSubmitall = async (event) => {
+  const onSubmitall = async () => {
+    console.log("Fetching all messages...");
     try {
       const messages = await wallet.callMethod({
           contractId: CONTRACT,
@@ -75,14 +75,14 @@ function App() {
           gas: "100000000000000",
           deposit: "0"
       });
-      return messages;
+      setMessages(messages.reverse());
     } catch (error) {
-      console.error('Error fetching messages:', error);
-      return [];
+      console.error('Error fetching all messages:', error);
     }
   };
-
-  const onSubmitprem = async (event) => {
+  
+  const onSubmitprem = async () => {
+    console.log("Fetching premium messages...");
     try {
       const messages = await wallet.callMethod({
           contractId: CONTRACT,
@@ -91,12 +91,12 @@ function App() {
           gas: "100000000000000",
           deposit: "0"
       });
-      return messages;
+      setMessages(messages.reverse());
     } catch (error) {
-      console.error('Error fetching messages:', error);
-      return [];
+      console.error('Error fetching premium messages:', error);
     }
   };
+  
 
   const signIn = async () => {
     try {
@@ -118,14 +118,14 @@ function App() {
 
   return (
     <main>
-<table className="w-full">
+<table className="w-full bg-black">
   <tbody>
-    <tr>
-      <td className="text-xl font-bold py-4 px-2"><h1>📖 NEAR Guest Book</h1></td>
-      <td className="text-right">
+    <tr className="">
+      <td className="text-xl font-bold py-4 px-10"><h1 className="text-white">📖 NEAR Guest Book</h1></td>
+      <td className="text-right px-10">
         {isSignedIn
-          ? <button onClick={signOut} className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 transition duration-300 ease-in-out">Log out</button>
-          : <button onClick={signIn} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out">Log in</button>
+          ? <button onClick={signOut} className="bg-red-500 text-white py-2 px-6 rounded hover:bg-red-700 transition duration-300 ease-in-out">Log out</button>
+          : <button onClick={signIn} className="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-700 transition duration-300 ease-in-out">Log in</button>
         }
       </td>
     </tr>
@@ -135,12 +135,22 @@ function App() {
 
       <hr />
       {isSignedIn
-        ? <Form onSubmit={onSubmit} onAllMessages={onSubmitall} onPremiumMessages={onSubmitprem} currentAccountId={wallet.accountId} />
+        ? <Form onSubmit={onSubmit} currentAccountId={wallet.accountId} />
+        
       // ? <TanStackTable messages={messages} />
        : <SignIn />
       }
+         <div className="flex justify-center gap-x-4 py-4">
+          <button type="button" onClick={onSubmitall} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+            All messages
+          </button>
+          <button type="button" onClick={onSubmitprem} className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+            Premium messages
+          </button>
+        </div>
 
-      <hr />
+
+
 
       {messages.length > 0 && <TanStackTable messages={messages}/>}
 

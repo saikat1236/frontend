@@ -49,13 +49,13 @@ import {
     });
   
     return (
-      <div className="p-2 max-w-5xl mx-auto text-white fill-gray-400">
+      <div className="p-2 max-w-5xl mx-auto text-white fill-gray-400 shadow-md">
         <div className="flex justify-between mb-2">
           <div className="w-full flex items-center gap-1">
           <DebouncedInput
             value={globalFilter ?? ""}
             onChange={(value) => setGlobalFilter(String(value))}
-            className="p-2 bg-transparent outline-none border-b-2 w-1/5 focus:w-1/3 duration-300 border-indigo-500 text-gray-500"
+            className="p-2 bg-transparent outline-none border-b-2 w-1/5 focus:w-1/3 duration-300 border-indigo-500 text-black"
             placeholder="Search all columns..."
           />
             {/* You can add a global filter input or other controls here */}
