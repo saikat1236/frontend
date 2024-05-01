@@ -1,0 +1,11 @@
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Distributes space between children */
+    padding: 1rem 0; /* Adds vertical padding for visual separation */
+  }
+  
+  /* Additional styling for buttons if needed */
+  .button-container button {
+    flex-grow: 1;  /* Allows buttons to expand and take available space */
+    margin: 0 50px; /* Adds margin between buttons */
+  }

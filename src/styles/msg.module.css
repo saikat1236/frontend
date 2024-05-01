@@ -1,0 +1,51 @@
+.messagesContainer {
+  overflow-x: auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 0.5rem;
+  border-color: #76797f;
+}
+
+.messagesTable {
+  width: 100%;
+  text-align: center;
+  color: #6b7280; /* gray-500 */
+}
+
+.tableHeader {
+  background-color: #25282A; /* black */
+  color: #d1d5db; /* gray-400 */
+  text-transform: uppercase;
+  font-size: 0.875rem; /* text-xs */
+  border-color: #fff;
+}
+
+.tableRow {
+  background-color: #25282A; /* black */
+  border-bottom: 2px solid grey; /* white */
+  border-color: #fff;
+}
+
+.tableRow:hover {
+  background-color: #333; /* darker gray */
+}
+
+.tableCell {
+  padding: 1rem 1.5rem;
+  color: #d1d5db; /* gray-400 */
+  border-color: #d1d5db;
+}
+
+.darkTableHeader {
+  background-color: #000; /* black */
+  color: #d1d5db; /* gray-400 */
+}
+
+.darkTableRow {
+  background-color: #000; /* black */
+  border-color: #fff; /* white */
+}
+
+.darkTableRow:hover {
+  background-color: #333; /* darker gray */
+}
+

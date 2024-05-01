@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Wallet } from "./services/near-wallet";
 import Form from './components/Form';
+import TanStackTable from './components/Table';
 import SignIn from './components/SignIn';
 import Messages from './components/Messages';
 import { utils } from 'near-api-js';
 import { HelloNearContract } from '.././src/config';
 
-// Contract that the app will interact with
 const CONTRACT = HelloNearContract;
 const wallet = new Wallet({ createAccessKeyFor: CONTRACT })
+
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const initFunction = async () => {
+    async function initFunction() {
       try {
         const isSignedIn = await wallet.startUp();
         const messages = await getLast10Messages();
@@ -27,72 +28,88 @@ function App() {
     }
     initFunction();
   }, []);
-  
 
   const getLast10Messages = async () => {
     try {
-        const messages = await wallet.callMethod({
-            contractId: CONTRACT,
-            method: "get_messages",
-            args: { 
-                from_index: 0,  // Pass as number, not string
-                limit: 10       // Pass as number, not string
-            },
-            gas: "100000000000000",  // Gas value
-            deposit: "0"             // No deposit is needed for fetching messages
-        });
-        return messages;
-    } catch (error) {
-        console.error('Error fetching messages:', error);
-        return []; // Return an empty array in case of failure
-    }
-};
-
-
-
-
-
-
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    const { fieldset, message, donation } = e.target.elements;
-    fieldset.disabled = true;
-  
-    try {
-      const deposit = utils.format.parseNearAmount(donation.value || '0');
-      await wallet.callMethod({
+      const messages = await wallet.callMethod({
           contractId: CONTRACT,
-          method: "add_message",
-          args: { message: message.value },
-          deposit
+          method: "get_messages",
+          args: { from_index: 0, limit: 10 },
+          gas: "100000000000000",
+          deposit: "0"
       });
-      const messages = await getLast10Messages();
-      setMessages(messages.reverse());
-      message.value = '';  // Clearing the input
-      donation.value = '0';
+      return messages;
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      return [];
+    }
+  };
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    const { message } = event.target.elements;
+    const deposit = "0"; // Simplified for now
+    try {
+      await wallet.callMethod({
+        contractId: CONTRACT,
+        method: "add_message",
+        args: { message: message.value },
+        deposit
+      });
+      const newMessages = await getLast10Messages();
+      setMessages(newMessages.reverse());
+      message.value = '';  // Clear the input after submission
     } catch (error) {
       console.error('Error submitting message:', error);
       alert('Failed to submit message.');
-    } finally {
-      fieldset.disabled = false;
-      message.focus();
     }
-};
+  };
 
-  
+  // Assume these functions have similar structures but different implementations
+  const onSubmitall = async (event) => {
+    try {
+      const messages = await wallet.callMethod({
+          contractId: CONTRACT,
+          method: "get_messages",
+          args: { from_index: 0, limit: 10 },
+          gas: "100000000000000",
+          deposit: "0"
+      });
+      return messages;
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      return [];
+    }
+  };
+
+  const onSubmitprem = async (event) => {
+    try {
+      const messages = await wallet.callMethod({
+          contractId: CONTRACT,
+          method: "get_premium_messages",
+          args: { from_index: 0, limit: 10 },
+          gas: "100000000000000",
+          deposit: "0"
+      });
+      return messages;
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      return [];
+    }
+  };
+
   const signIn = async () => {
     try {
-      await wallet.signIn();  // Assuming this returns a promise
+      await wallet.signIn();
       setIsSignedIn(true);
     } catch (error) {
       console.error('Failed to sign in:', error);
     }
   };
-  
+
   const signOut = async () => {
     try {
-      await wallet.signOut(); // Assuming this returns a promise
+      await wallet.signOut();
       setIsSignedIn(false);
     } catch (error) {
       console.error('Failed to sign out:', error);
@@ -101,35 +118,34 @@ function App() {
 
   return (
     <main>
-    <table>
+<table className="w-full">
   <tbody>
     <tr>
-      <td><h1>📖 NEAR Guest Book</h1></td>
-      <td>
+      <td className="text-xl font-bold py-4 px-2"><h1>📖 NEAR Guest Book</h1></td>
+      <td className="text-right">
         {isSignedIn
-          ? <button onClick={signOut}>Log out</button>
-          : <button onClick={signIn}>Log in</button>
+          ? <button onClick={signOut} className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 transition duration-300 ease-in-out">Log out</button>
+          : <button onClick={signIn} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300 ease-in-out">Log in</button>
         }
       </td>
     </tr>
   </tbody>
 </table>
 
+
       <hr />
       {isSignedIn
-        ? <Form onSubmit={onSubmit} currentAccountId={wallet.accountId} />
-        : <SignIn />
+        ? <Form onSubmit={onSubmit} onAllMessages={onSubmitall} onPremiumMessages={onSubmitprem} currentAccountId={wallet.accountId} />
+      // ? <TanStackTable messages={messages} />
+       : <SignIn />
       }
 
       <hr />
 
-      {messages.length > 0 && <Messages messages={messages} />}
-
+      {messages.length > 0 && <TanStackTable messages={messages}/>}
 
     </main>
-  )
+  );
 }
 
-export default App
-
-
+export default App;

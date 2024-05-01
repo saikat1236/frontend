@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from '../styles/msg.css'; // adjust path as necessary
+import styles from '../styles/msg.module.css';
 
 export default function Messages({ messages }) {
   return (
