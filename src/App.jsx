@@ -135,12 +135,11 @@ function App() {
 
       <hr />
       {isSignedIn
-        ? <Form onSubmit={onSubmit} currentAccountId={wallet.accountId} />
-        
-      // ? <TanStackTable messages={messages} />
-       : <SignIn />
-      }
-         <div className="flex justify-center gap-x-4 py-4">
+        ? (
+        <>
+        <Form onSubmit={onSubmit} currentAccountId={wallet.accountId} />
+
+        <div className="flex justify-center gap-x-4 py-4">
           <button type="button" onClick={onSubmitall} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
             All messages
           </button>
@@ -148,11 +147,15 @@ function App() {
             Premium messages
           </button>
         </div>
+        {messages.length > 0 && <TanStackTable messages={messages}/>}
+      </>
 
-
-
-
-      {messages.length > 0 && <TanStackTable messages={messages}/>}
+        )
+        // ? <TanStackTable messages={messages} />
+        : <SignIn />
+      }
+  
+      
 
     </main>
   );
