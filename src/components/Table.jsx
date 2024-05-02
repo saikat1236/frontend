@@ -78,17 +78,17 @@ import {
               table.getRowModel().rows.map((row, i) => (
                 <tr
                   key={row.id}
-                  className={`${i % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}`}
+                  className={`${i % 2 === 0 ? "bg-gray-100" : "bg-gray-200"}`}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-3.5 py-2">
+                    <td key={cell.id} className="px-3.5 py-2 text-black">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
                 </tr>
               ))
             ) : (
-              <tr className="text-center h-32">
+              <tr className="text-center  h-32">
                 <td colSpan={12}>No Records Found!</td>
               </tr>
             )}
