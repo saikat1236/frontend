@@ -1,19 +1,16 @@
 
-// near api js
 import { providers } from 'near-api-js';
-
-// wallet selector
 import { distinctUntilChanged, map } from 'rxjs';
 import '@near-wallet-selector/modal-ui/styles.css';
 import { setupModal } from '@near-wallet-selector/modal-ui';
 import { setupWalletSelector } from '@near-wallet-selector/core';
-// import { setupHereWallet } from '@near-wallet-selector/here-wallet';
 import { setupMyNearWallet } from '@near-wallet-selector/my-near-wallet';
 
 const THIRTY_TGAS = '30000000000000';
 const NO_DEPOSIT = '0';
 
 export class Wallet {
+
   /**
    * @constructor
    * @param {string} networkId - the network id to connect to
@@ -22,16 +19,17 @@ export class Wallet {
    * const wallet = new Wallet({ networkId: 'testnet', createAccessKeyFor: 'contractId' });
    * wallet.startUp((signedAccountId) => console.log(signedAccountId));
    */
+  
   constructor({ networkId = 'testnet', createAccessKeyFor = undefined }) {
     this.createAccessKeyFor = createAccessKeyFor;
     this.networkId = networkId;
   }
 
   /**
-   * To be called when the website loads
    * @param {Function} accountChangeHook - a function that is called when the user signs in or out#
    * @returns {Promise<string>} - the accountId of the signed-in user 
    */
+
   startUp = async (accountChangeHook) => {
     this.selector = setupWalletSelector({
       network: this.networkId,
@@ -55,24 +53,19 @@ export class Wallet {
     return accountId;
   };
 
-  /**
-   * Displays a modal to login the user
-   */
+
   signIn = async () => {
     const modal = setupModal(await this.selector, { contractId: this.createAccessKeyFor });
     modal.show();
   };
 
-  /**
-   * Logout the user
-   */
+
   signOut = async () => {
     const selectedWallet = await (await this.selector).wallet();
     selectedWallet.signOut();
   };
 
   /**
-   * Makes a read-only call to a contract
    * @param {string} contractId - the contract's account id
    * @param {string} method - the method to call
    * @param {Object} args - the arguments to pass to the method
@@ -103,6 +96,7 @@ export class Wallet {
    * @param {string} deposit - the amount of yoctoNEAR to deposit
    * @returns {Promise<Transaction>} - the resulting transaction
    */
+
   callMethod = async ({ contractId, method, args = {}, gas = THIRTY_TGAS, deposit = NO_DEPOSIT }) => {
     // Sign a transaction with the "FunctionCall" action
     const selectedWallet = await (await this.selector).wallet();
@@ -129,13 +123,13 @@ export class Wallet {
    * @param {string} txhash - the transaction hash
    * @returns {Promise<JSON.value>} - the result of the transaction
    */
+
   getTransactionResult = async (txhash) => {
     const walletSelector = await this.selector;
     const { network } = walletSelector.options;
     const provider = new providers.JsonRpcProvider({ url: network.nodeUrl });
-
-    // Retrieve transaction result from the network
     const transaction = await provider.txStatus(txhash, 'unnused');
     return providers.getTransactionLastResult(transaction);
   };
+
 }
