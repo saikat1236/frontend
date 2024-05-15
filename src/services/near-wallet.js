@@ -5,8 +5,9 @@ import '@near-wallet-selector/modal-ui/styles.css';
 import { setupModal } from '@near-wallet-selector/modal-ui';
 import { setupWalletSelector } from '@near-wallet-selector/core';
 import { setupMyNearWallet } from '@near-wallet-selector/my-near-wallet';
+import { setupHereWallet } from '@near-wallet-selector/here-wallet';
 
-const THIRTY_TGAS = '30000000000000';
+const THIRTY_TGAS = '30000000000000'; // check units of currency
 const NO_DEPOSIT = '0';
 
 export class Wallet {
@@ -33,7 +34,7 @@ export class Wallet {
   startUp = async (accountChangeHook) => {
     this.selector = setupWalletSelector({
       network: this.networkId,
-      modules: [setupMyNearWallet()]
+      modules: [setupMyNearWallet(), setupHereWallet()]
     });
 
     const walletSelector = await this.selector;

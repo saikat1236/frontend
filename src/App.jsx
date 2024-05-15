@@ -3,9 +3,8 @@ import { Wallet } from "./services/near-wallet";
 import Form from './components/Form';
 import TanStackTable from './components/Table';
 import SignIn from './components/SignIn';
-import Messages from './components/Messages';
-import { utils } from 'near-api-js';
 import { HelloNearContract } from '.././src/config';
+import { utils } from 'near-api-js';
 
 const CONTRACT = HelloNearContract;
 const wallet = new Wallet({ createAccessKeyFor: CONTRACT })
@@ -31,12 +30,11 @@ function App() {
 
   const getLast10Messages = async () => {
     try {
-      const messages = await wallet.callMethod({
+      const messages = await wallet.viewMethod({
           contractId: CONTRACT,
           method: "get_messages",
           args: { from_index: 0, limit: 10 },
           gas: "100000000000000",
-          deposit: "0"
       });
       return messages;
     } catch (error) {
@@ -48,13 +46,14 @@ function App() {
   const onSubmit = async (event) => {
     event.preventDefault();
     const { message } = event.target.elements;
-    const deposit = "0"; // Simplified for now
+    const { premium } = event.target.elements;
+    const deposit = utils.format.parseNearAmount(premium.value);
     try {
       await wallet.callMethod({
         contractId: CONTRACT,
         method: "add_message",
         args: { message: message.value },
-        deposit
+        deposit: deposit
       });
       const newMessages = await getLast10Messages();
       setMessages(newMessages.reverse());
@@ -68,7 +67,7 @@ function App() {
   const onSubmitall = async () => {
     console.log("Fetching all messages...");
     try {
-      const messages = await wallet.callMethod({
+      const messages = await wallet.viewMethod({
           contractId: CONTRACT,
           method: "get_messages",
           args: { from_index: 0, limit: 10 },
@@ -84,12 +83,25 @@ function App() {
   const onSubmitprem = async () => {
     console.log("Fetching premium messages...");
     try {
-      const messages = await wallet.callMethod({
+      const messages = await wallet.viewMethod({
           contractId: CONTRACT,
           method: "get_premium_messages",
           args: { from_index: 0, limit: 10 },
           gas: "100000000000000",
           deposit: "0"
+      });
+      setMessages(messages.reverse());
+    } catch (error) {
+      console.error('Error fetching premium messages:', error);
+    }
+  };
+
+  const onSubmitsigned = async () => {
+    console.log("Fetching premium messages...");
+    try {
+      const messages = await wallet.callMethod({
+          contractId: CONTRACT,
+          method: "messages_by_signed_in_user",
       });
       setMessages(messages.reverse());
     } catch (error) {
@@ -142,6 +154,9 @@ function App() {
         <div className="flex justify-center gap-x-4 py-4">
           <button type="button" onClick={onSubmitall} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
             All messages
+          </button>
+          <button type="button" onClick={onSubmitsigned} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            SignedIn messages
           </button>
           <button type="button" onClick={onSubmitprem} className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
             Premium messages
